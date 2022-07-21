@@ -5,6 +5,7 @@ import uuid
 from typing import Any, Dict
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from starlette.responses import FileResponse
 
 debug = sys.argv[1] == "debug"
 app = FastAPI(debug=debug)
@@ -84,6 +85,12 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
+
+
+@app.get("/")
+async def home():
+    """Renders the home page."""
+    return FileResponse("views/home.html")
 
 
 @app.websocket("/ws")
