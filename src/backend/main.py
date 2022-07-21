@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import sys
-import traceback
 import uuid
 from typing import Any, Dict
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 debug = sys.argv[1] == "debug"
-app = FastAPI(
-    debug=debug
-)
+app = FastAPI(debug=debug)
 
 
 class WebsocketConnection:
@@ -24,35 +21,24 @@ class WebsocketConnection:
         self.ws = ws
         self.id = uuid.uuid4()
 
-    async def send_json(self, data: Dict[Any, Any]):
-        """
-        Sends a message to the websocket connection.
-
-        :param message: The message to send.
-        """
-        try:
-            await self.ws.send_json(data)
-        except Exception as exc:
-            print("EXCEPTION RAISED FROM SENDING A MESSAGE; printing exception...")
-            traceback.print_exception(exc)
-
     @classmethod
-    async def from_websocket(cls, ws: WebSocket) -> WebsocketConnection:
+    async def from_websocket(cls, websocket: WebSocket) -> WebsocketConnection:
         """
         Creates a `WebsocketConnection` from a websocket connection.
 
         :param ws: The websocket connection to use.
         """
-        await ws.accept()
-        self = cls(ws)
+        await websocket.accept()
+        self = cls(websocket)
         return self
 
-    async def parse(self, message: Dict[Any, Any]):
+    async def parse(self, data: Dict[Any, Any]):
         """
         Parses a message from the websocket connection.
 
         :param message: Message from the websocket.
         """
+        print(data)
 
     async def listen(self):
         """Listens for messages from the websocket connection."""
@@ -77,14 +63,16 @@ class ConnectionManager:
         """
         connection = await WebsocketConnection.from_websocket(websocket)
         self.active_connections[connection.id] = connection
+        print(self.active_connections)
         return connection
 
-    def disconnect(self, websocket: WebsocketConnection):
+    def disconnect(self, connection: WebsocketConnection):
         """Disconnects from the websocket connection.
 
-        :param websocket: The websocket to disconnect from.
+        :param connection: The websocket to disconnect from.
         """
-        del self.active_connections[websocket.id]
+        print(self.active_connections)
+        del self.active_connections[connection.id]
 
     async def broadcast(self, message: str):
         """Broadcasts a message to every connected websocket connection
@@ -92,19 +80,19 @@ class ConnectionManager:
         :param message: Message to broadcast.
         """
         for id, connection in self.active_connections.items():
-            await connection.send_json(message)
+            await connection.ws.send_json(message)
 
 
 manager = ConnectionManager()
 
 
-@app.websocket("/ws/")
+@app.websocket("/ws")
 async def websocket_connect(websocket: WebSocket):
     """Default websocket connection connection."""
     connection = await manager.connect(websocket)
-    while True:
-        try:
+    try:
+        await connection.ws.send_json({"op": 0, "message": "Hello, world!"})
+        while True:
             await connection.listen()
-        except Exception as exc:
-            print("EXCEPTION RAISED FROM LISTENING; printing exception...")
-            traceback.print_exception(exc)
+    except WebSocketDisconnect:
+        manager.disconnect(connection)
