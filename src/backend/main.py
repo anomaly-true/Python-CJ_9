@@ -7,9 +7,7 @@ from typing import Any, Dict
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 debug = sys.argv[1] == "debug"
-app = FastAPI(
-    debug=debug
-)
+app = FastAPI(debug=debug)
 
 
 class WebsocketConnection:
