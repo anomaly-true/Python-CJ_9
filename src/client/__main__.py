@@ -4,10 +4,7 @@ import asyncio
 from typing import Any, Dict
 
 from aiohttp import (
-    ClientConnectionError,
-    ClientSession,
-    ClientWebSocketResponse,
-    WSMsgType,
+    ClientConnectionError, ClientSession, ClientWebSocketResponse, WSMsgType
 )
 
 
