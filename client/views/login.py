@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+from random import choice
 
 from aiohttp import ClientSession
 from PyQt5 import QtGui, QtWidgets, uic
 from qasync import asyncClose, asyncSlot
+from qt_material import apply_stylesheet
+from qtwidgets import AnimatedToggle
 
 from . import home
 
@@ -24,9 +27,19 @@ class Window(QtWidgets.QMainWindow):
     def __init__(self, loop: asyncio.AbstractEventLoop, session: ClientSession):
         super().__init__()
         uic.loadUi('ui/login.ui', self)
+        apply_stylesheet(self, theme='light_teal.xml')
 
         button: QtWidgets.QPushButton = self.findChild(QtWidgets.QPushButton, "loginButton")
         button.clicked.connect(self.on_login)
+
+        central_widget: QtWidgets.QVBoxLayout = self.findChild(QtWidgets.QVBoxLayout, "verticalLayout_7")
+        toggle = AnimatedToggle(
+            checked_color="#FFFFFF",
+            pulse_checked_color="#000000"
+        )
+        toggle.setMaximumSize(100, 100)
+        toggle.clicked.connect(self.theme_toggle)
+        central_widget.addChildWidget(toggle)
 
         self.error_message: QtWidgets.QLabel = self.findChild(QtWidgets.QLabel, "errorMessage")
         self.username_input: QtWidgets.QLineEdit = self.findChild(QtWidgets.QLineEdit, "usernameLineEdit")
@@ -38,6 +51,8 @@ class Window(QtWidgets.QMainWindow):
         self.loop = loop
         self.session = session
 
+        self.light_mode = False
+
     @asyncClose
     async def closeEvent(self, event: QtGui.QCloseEvent):
         """Represents the default close event.
@@ -45,6 +60,16 @@ class Window(QtWidgets.QMainWindow):
         Asynchronously closes the aiohttp session.
         """
         await self.session.close()
+
+    @asyncSlot()
+    async def theme_toggle(self):
+        """Called when the light mode toggle is clicked."""
+        if self.light_mode:
+            apply_stylesheet(self, theme='dark_teal.xml')
+            self.light_mode = choice([True, False, False])
+        else:
+            apply_stylesheet(self, theme='light_teal.xml')
+            self.light_mode = choice([True, True, False])
 
     @asyncSlot()
     async def on_login(self):
