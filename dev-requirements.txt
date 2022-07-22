@@ -12,3 +12,6 @@ flake8-docstrings~=1.6.0
 
 fastapi~=0.78
 uvicorn~=0.17.6
+
+qasync~=0.23
+pyqyt5~=5.15.6
