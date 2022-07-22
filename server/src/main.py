@@ -185,7 +185,7 @@ async def create_account(body: LoginModel):
 async def websocket_connect(websocket: WebSocket, token: str):
     """Default websocket connection connection."""
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"/user?token={token}") as request:
+        async with session.get(f"http://127.0.0.1:8080/user?token={token}") as request:
             response = await request.json()
             if "error" in response:
                 return
