@@ -122,6 +122,11 @@ async def login(body: LoginModel):
 
     :param body: The body received from the request.
     """
+    response = await database.fetch_one(
+        "SELECT * FROM users WHERE username=:username AND password=:password",
+        values={"username": body.username, "password": body.password}
+    )
+    return response
 
 
 @app.get("/register")
@@ -136,6 +141,13 @@ async def create_account(body: LoginModel):
 
     :param body: The body received from the request.
     """
+    query = models.User.__table__.insert().values(
+        username=body.username, password=body.password, token=str(uuid.uuid4())
+    )
+    try:
+        await database.execute(query)
+    except Exception:
+        return
 
 
 @app.websocket("/ws")
