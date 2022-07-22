@@ -124,7 +124,7 @@ async def login(body: LoginModel):
     """
     response = await database.fetch_one(
         "SELECT * FROM users WHERE username=:username AND password=:password",
-        values={"username": body.username, "password": body.password}
+        values={"username": body.username, "password": body.password},
     )
     return response
 
