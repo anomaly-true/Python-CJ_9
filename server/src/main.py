@@ -14,6 +14,7 @@ app = FastAPI(debug=debug)
 
 class LoginModel(pydantic.BaseModel):
     """The user login body"""
+    
     username: str
     password: str
 
