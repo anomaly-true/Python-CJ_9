@@ -19,7 +19,6 @@ class Window(QtWidgets.QMainWindow):
     def __init__(self, loop: asyncio.AbstractEventLoop, session: ClientSession):
         super().__init__()
         uic.loadUi("ui/login.ui", self)
-        apply_stylesheet(self, theme="light_teal.xml")
 
         button: QtWidgets.QPushButton = self.findChild(
             QtWidgets.QPushButton, "loginButton"
@@ -50,8 +49,11 @@ class Window(QtWidgets.QMainWindow):
         self.loop = loop
         self.session = session
 
-        self.light_mode = False
-        self.is_running = True
+        self.light_mode: bool = False
+        self.is_running: bool = True
+
+        self.theme_colour: str = "purple"
+        apply_stylesheet(self, theme=f"light_{self.theme_colour}.xml")
 
     @asyncClose
     async def closeEvent(self, event: QtGui.QCloseEvent):
@@ -65,10 +67,10 @@ class Window(QtWidgets.QMainWindow):
     async def theme_toggle(self):
         """Called when the light mode toggle is clicked."""
         if self.light_mode:
-            apply_stylesheet(self, theme="dark_teal.xml")
+            apply_stylesheet(self, theme=f"dark_{self.theme_colour}.xml")
             self.light_mode = choice([True, False, False])
         else:
-            apply_stylesheet(self, theme="light_teal.xml")
+            apply_stylesheet(self, theme=f"light_{self.theme_colour}.xml")
             self.light_mode = choice([True, True, False])
 
     @asyncSlot()
