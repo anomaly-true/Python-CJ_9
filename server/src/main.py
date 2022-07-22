@@ -4,6 +4,7 @@ import sys
 import uuid
 from typing import Any, Dict
 
+import aiohttp
 import databases
 import pydantic
 from app import models
@@ -48,19 +49,20 @@ class WebsocketConnection:
 
     MESSAGE = 0
 
-    def __init__(self, ws: WebSocket):
+    def __init__(self, ws: WebSocket, username: str):
         self.ws = ws
+        self.username = username
         self.id = uuid.uuid4()
 
     @classmethod
-    async def from_websocket(cls, websocket: WebSocket) -> WebsocketConnection:
+    async def from_websocket(cls, websocket: WebSocket, username: str) -> WebsocketConnection:
         """
         Creates a `WebsocketConnection` from a websocket connection.
 
         :param ws: The websocket connection to use.
         """
         await websocket.accept()
-        self = cls(websocket)
+        self = cls(websocket, username)
         return self
 
     async def parse(self, data: Dict[Any, Any]):
@@ -90,12 +92,12 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebsocketConnection] = {}
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, username: str):
         """Connects to the websocket connection.
 
         :param websocket: The websocket to connect to.
         """
-        connection = await WebsocketConnection.from_websocket(websocket)
+        connection = await WebsocketConnection.from_websocket(websocket, username)
         self.active_connections[connection.id] = connection
         print(self.active_connections)
         return connection
@@ -126,6 +128,21 @@ manager = ConnectionManager()
 async def home():
     """Renders the home page."""
     return FileResponse("views/home.html")
+
+
+@app.get("/user")
+async def get_user(token: str):
+    """Gets a user from the token.
+
+    :param token: The token of the user.
+    """
+    response = await database.fetch_one(
+        "SELECT * FROM users WHERE token=:token",
+        values={"token": token},
+    )
+    if response is None:
+        return {"error": "Please enter a valid username and password."}
+    return response
 
 
 @app.get("/login")
@@ -165,9 +182,15 @@ async def create_account(body: LoginModel):
 
 
 @app.websocket("/ws/{token}")
-async def websocket_connect(websocket: WebSocket, _: str):
+async def websocket_connect(websocket: WebSocket, token: str):
     """Default websocket connection connection."""
-    connection = await manager.connect(websocket)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"/user?token={token}") as request:
+            response = await request.json()
+            if "error" in response:
+                return
+
+    connection = await manager.connect(websocket, response["username"])
     try:
         while True:
             await connection.listen()
