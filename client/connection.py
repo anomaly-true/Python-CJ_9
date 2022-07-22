@@ -3,9 +3,7 @@ from __future__ import annotations
 import asyncio
 from typing import Any, Dict
 
-from aiohttp import (
-    ClientConnectionError, ClientSession, ClientWebSocketResponse, WSMsgType
-)
+from aiohttp import ClientSession, ClientWebSocketResponse, WSMsgType
 
 
 class WebsocketHandler:
@@ -57,22 +55,3 @@ class WebsocketHandler:
         async for message in self.socket:
             if message.type == WSMsgType.TEXT:
                 await self.parse(message.data)
-
-
-async def main():
-    """Main function."""
-    loop = asyncio.get_event_loop()
-    session = ClientSession()
-
-    try:
-        websocket = await WebsocketHandler.from_client(session, loop)
-        print("Websocket connected")
-        while True:
-            await websocket.listen()
-    except ClientConnectionError:
-        print("Websocket disconnected")
-        return
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
