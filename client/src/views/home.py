@@ -32,9 +32,22 @@ class Window(QtWidgets.QMainWindow):
         self.message_box.returnPressed.connect(self.send_message)
         self.send_button.clicked.connect(self.send_message)
 
+    def append_message(self, message: str, username: str = None):
+        """Appends a message to the chat box.
+
+        :param message: The message to append to the chat box.
+        :param username: The username of the message author.
+        """
+        if username is None:
+            username = self.connection.username
+
+        self.chat_box.setText(f"{self.chat_box.toPlainText()}\n{username}: {message}")
+
     @asyncSlot()
     async def send_message(self):
         """Triggered when a user presses the send button."""
-        text = self.message_box.text()
-        self.chat_box.setText(f"{self.chat_box.toPlainText()}\n{self.connection.username}: {text}")
+        message = self.message_box.text()
+        self.append_message(message)
+
         self.message_box.clear()
+        await self.connection.send({"op": 0, "data": {"message": message, "from": self.connection.username}})
