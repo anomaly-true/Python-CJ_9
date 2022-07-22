@@ -3,7 +3,8 @@ from __future__ import annotations
 import asyncio
 from random import choice
 
-from aiohttp import ClientSession
+from aiohttp import ClientConnectionError, ClientSession
+from connection import WebsocketConnection, WebsocketHandler
 from PyQt5 import QtGui, QtWidgets, uic
 from qasync import asyncClose, asyncSlot
 from qt_material import apply_stylesheet
@@ -13,16 +14,7 @@ from . import home
 
 
 class Window(QtWidgets.QMainWindow):
-    """Represents the graphical login screen.
-
-    Attributes
-    ----------
-    portal_window: :class:`home.Window`
-        The home window instance that will be created when
-        the user successfully makes the login request.
-    """
-
-    portal_window: home.Window
+    """Represents the graphical login screen."""
 
     def __init__(self, loop: asyncio.AbstractEventLoop, session: ClientSession):
         super().__init__()
@@ -52,6 +44,7 @@ class Window(QtWidgets.QMainWindow):
         self.session = session
 
         self.light_mode = False
+        self.is_running = True
 
     @asyncClose
     async def closeEvent(self, event: QtGui.QCloseEvent):
@@ -89,4 +82,26 @@ class Window(QtWidgets.QMainWindow):
             "password": password_text
         }) as request:
             response = await request.json()
-            print(response)
+            if "error" in response:
+                return self.error_message.setText("ERROR: " + response["error"])
+
+        self.destroy()
+
+        try:
+            websocket = await WebsocketHandler.from_user(self.session, response["token"])
+            print("Websocket connected")
+
+            connection = WebsocketConnection(
+                self.loop,
+                session=self.session,
+                webscket=websocket
+            )
+
+            home_window = home.Window(connection)
+            home_window.show()
+
+            while True:
+                await websocket.listen()
+        except ClientConnectionError:
+            self.is_running = False
+            print("Websocket disconnected")
