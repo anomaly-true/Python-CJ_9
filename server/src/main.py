@@ -4,12 +4,27 @@ import sys
 import uuid
 from typing import Any, Dict
 
+import databases
 import pydantic
+from app import models
+from app.database import SQLALCHEMY_DATABASE_URL, engine
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from starlette.responses import FileResponse
 
 debug = sys.argv[1] == "debug"
 app = FastAPI(debug=debug)
+database = databases.Database(SQLALCHEMY_DATABASE_URL)
+models.Base.metadata.create_all(bind=engine)
+
+
+@app.on_event("startup")
+async def connect():  # noqa: D103
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():  # noqa: D103
+    await database.disconnect()
 
 
 class LoginModel(pydantic.BaseModel):
