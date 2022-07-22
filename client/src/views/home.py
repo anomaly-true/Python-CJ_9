@@ -19,15 +19,21 @@ class Window(QtWidgets.QMainWindow):
 
     def __init__(self, connection: WebsocketConnection):
         super().__init__()
-        uic.loadUi('ui/home.ui', self)
+        uic.loadUi("ui/home.ui", self)
 
-        apply_stylesheet(self, theme='dark_purple.xml')
+        apply_stylesheet(self, theme="dark_purple.xml")
 
         self.connection = connection
 
-        self.chat_box: QtWidgets.QTextEdit = self.findChild(QtWidgets.QTextEdit, "chatBox")
-        self.message_box: QtWidgets.QLineEdit = self.findChild(QtWidgets.QLineEdit, "messageBox")
-        self.send_button: QtWidgets.QPushButton = self.findChild(QtWidgets.QPushButton, "sendButton")
+        self.chat_box: QtWidgets.QTextEdit = self.findChild(
+            QtWidgets.QTextEdit, "chatBox"
+        )
+        self.message_box: QtWidgets.QLineEdit = self.findChild(
+            QtWidgets.QLineEdit, "messageBox"
+        )
+        self.send_button: QtWidgets.QPushButton = self.findChild(
+            QtWidgets.QPushButton, "sendButton"
+        )
 
         self.message_box.returnPressed.connect(self.send_message)
         self.send_button.clicked.connect(self.send_message)
@@ -50,4 +56,6 @@ class Window(QtWidgets.QMainWindow):
         self.append_message(message)
 
         self.message_box.clear()
-        await self.connection.send({"op": 0, "data": {"message": message, "from": self.connection.username}})
+        await self.connection.send(
+            {"op": 0, "data": {"message": message, "from": self.connection.username}}
+        )

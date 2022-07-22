@@ -17,7 +17,9 @@ class WebsocketConnection:
     session: ClientSession
     websocket: WebsocketHandler
 
-    def __init__(self, username: str, session: ClientSession, websocket: WebsocketHandler) -> None:
+    def __init__(
+        self, username: str, session: ClientSession, websocket: WebsocketHandler
+    ) -> None:
         self.username = username
         self.session = session
         self.websocket = websocket
@@ -52,11 +54,7 @@ class WebsocketHandler:
         self.socket = websocket
 
     @classmethod
-    async def from_user(
-        cls,
-        session: ClientSession,
-        token: str
-    ) -> WebsocketHandler:
+    async def from_user(cls, session: ClientSession, token: str) -> WebsocketHandler:
         """Handles the websocket connection.
 
         :param session: The session used to make the websocket connection.

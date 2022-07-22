@@ -18,24 +18,31 @@ class Window(QtWidgets.QMainWindow):
 
     def __init__(self, loop: asyncio.AbstractEventLoop, session: ClientSession):
         super().__init__()
-        uic.loadUi('ui/login.ui', self)
-        apply_stylesheet(self, theme='light_teal.xml')
+        uic.loadUi("ui/login.ui", self)
+        apply_stylesheet(self, theme="light_teal.xml")
 
-        button: QtWidgets.QPushButton = self.findChild(QtWidgets.QPushButton, "loginButton")
+        button: QtWidgets.QPushButton = self.findChild(
+            QtWidgets.QPushButton, "loginButton"
+        )
         button.clicked.connect(self.on_login)
 
-        central_widget: QtWidgets.QVBoxLayout = self.findChild(QtWidgets.QVBoxLayout, "verticalLayout_7")
-        toggle = AnimatedToggle(
-            checked_color="#FFFFFF",
-            pulse_checked_color="#000000"
+        central_widget: QtWidgets.QVBoxLayout = self.findChild(
+            QtWidgets.QVBoxLayout, "verticalLayout_7"
         )
+        toggle = AnimatedToggle(checked_color="#FFFFFF", pulse_checked_color="#000000")
         toggle.setMaximumSize(100, 100)
         toggle.clicked.connect(self.theme_toggle)
         central_widget.addChildWidget(toggle)
 
-        self.error_message: QtWidgets.QLabel = self.findChild(QtWidgets.QLabel, "errorMessage")
-        self.username_input: QtWidgets.QLineEdit = self.findChild(QtWidgets.QLineEdit, "usernameLineEdit")
-        self.password_input: QtWidgets.QLineEdit = self.findChild(QtWidgets.QLineEdit, "passwordLineEdit")
+        self.error_message: QtWidgets.QLabel = self.findChild(
+            QtWidgets.QLabel, "errorMessage"
+        )
+        self.username_input: QtWidgets.QLineEdit = self.findChild(
+            QtWidgets.QLineEdit, "usernameLineEdit"
+        )
+        self.password_input: QtWidgets.QLineEdit = self.findChild(
+            QtWidgets.QLineEdit, "passwordLineEdit"
+        )
 
         self.username_input.returnPressed.connect(self.on_login)
         self.password_input.returnPressed.connect(self.on_login)
@@ -58,10 +65,10 @@ class Window(QtWidgets.QMainWindow):
     async def theme_toggle(self):
         """Called when the light mode toggle is clicked."""
         if self.light_mode:
-            apply_stylesheet(self, theme='dark_teal.xml')
+            apply_stylesheet(self, theme="dark_teal.xml")
             self.light_mode = choice([True, False, False])
         else:
-            apply_stylesheet(self, theme='light_teal.xml')
+            apply_stylesheet(self, theme="light_teal.xml")
             self.light_mode = choice([True, True, False])
 
     @asyncSlot()
@@ -77,10 +84,10 @@ class Window(QtWidgets.QMainWindow):
         if not all([text for text in [username_text, password_text]]):
             return self.error_message.setText("ERROR: Please fill out all fields")
 
-        async with self.session.get("http://127.0.0.1:8082/login", json={
-            "username": username_text,
-            "password": password_text
-        }) as request:
+        async with self.session.get(
+            "http://127.0.0.1:8082/login",
+            json={"username": username_text, "password": password_text},
+        ) as request:
             response = await request.json()
             if "error" in response:
                 return self.error_message.setText("ERROR: " + response["error"])
@@ -92,16 +99,14 @@ class Window(QtWidgets.QMainWindow):
             print("Websocket connected")
 
             connection = WebsocketConnection(
-                self.loop,
-                session=self.session,
-                webscket=websocket
+                self.loop, session=self.session, webscket=websocket
             )
 
             home_window = home.Window(connection)
             home_window.show()
 
             while True:
-                await websocket.listen()
+                await websocket.listen(home_window)
         except ClientConnectionError:
             self.is_running = False
             print("Websocket disconnected")
