@@ -74,12 +74,12 @@
            </font>
           </property>
           <property name="text">
-           <string>Email</string>
+           <string>Username</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="emailLineEdit">
+         <widget class="QLineEdit" name="usernameLineEdit">
           <property name="styleSheet">
            <string notr="true"/>
           </property>
