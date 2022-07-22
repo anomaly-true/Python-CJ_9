@@ -39,7 +39,14 @@ class WebsocketConnection:
 
     Holds any information related to a websocket connection
     in order to cleanly manage connections.
+
+    Attributes
+    ----------
+    MESSAGE
+        A user has sent a message.
     """
+
+    MESSAGE = 0
 
     def __init__(self, ws: WebSocket):
         self.ws = ws
@@ -62,7 +69,10 @@ class WebsocketConnection:
 
         :param message: Message from the websocket.
         """
-        print(data)
+        op = data.get("op")
+
+        if op == self.MESSAGE:
+            await manager.broadcast(data, ignore=self.id)
 
     async def listen(self):
         """Listens for messages from the websocket connection."""
@@ -98,12 +108,14 @@ class ConnectionManager:
         print(self.active_connections)
         del self.active_connections[connection.id]
 
-    async def broadcast(self, message: str):
+    async def broadcast(self, message: Dict[Any, Any], *, ignore: str):
         """Broadcasts a message to every connected websocket connection
 
         :param message: Message to broadcast.
         """
         for id, connection in self.active_connections.items():
+            if id == ignore:
+                continue
             await connection.ws.send_json(message)
 
 
@@ -122,6 +134,13 @@ async def login(body: LoginModel):
 
     :param body: The body received from the request.
     """
+    response = await database.fetch_one(
+        "SELECT * FROM users WHERE username=:username AND password=:password",
+        values={"username": body.username, "password": body.password},
+    )
+    if response is None:
+        return {"error": "Please enter a valid username and password."}
+    return response
 
 
 @app.get("/register")
@@ -136,14 +155,20 @@ async def create_account(body: LoginModel):
 
     :param body: The body received from the request.
     """
+    query = models.User.__table__.insert().values(
+        username=body.username, password=body.password, token=str(uuid.uuid4())
+    )
+    try:
+        await database.execute(query)
+    except Exception:
+        return
 
 
-@app.websocket("/ws")
-async def websocket_connect(websocket: WebSocket):
+@app.websocket("/ws/{token}")
+async def websocket_connect(websocket: WebSocket, _: str):
     """Default websocket connection connection."""
     connection = await manager.connect(websocket)
     try:
-        await connection.ws.send_json({"op": 0, "message": "Hello, world!"})
         while True:
             await connection.listen()
     except WebSocketDisconnect:

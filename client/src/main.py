@@ -15,10 +15,11 @@ async def main():
         timeout=ClientTimeout(total=10),
     )
 
-    main_window = login.Window(loop, session)
-    main_window.show()
+    login_window = login.Window(loop, session)
+    login_window.show()
 
     await asyncio.Future()
+
 
 if __name__ == "__main__":
     try:

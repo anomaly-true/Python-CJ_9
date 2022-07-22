@@ -1,4 +1,3 @@
-
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -9,7 +8,8 @@ class User(Base):  # noqa: D101
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True)
+    token = Column(String)
+    username = Column(String, index=True, unique=True)
     password = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
 
