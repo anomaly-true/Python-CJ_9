@@ -38,16 +38,16 @@ class Window(QtWidgets.QMainWindow):
         self.message_box.returnPressed.connect(self.send_message)
         self.send_button.clicked.connect(self.send_message)
 
-    def append_message(self, message: str, username: str = None):
+    def append_message(self, message: str, author: str = None):
         """Appends a message to the chat box.
 
         :param message: The message to append to the chat box.
         :param username: The username of the message author.
         """
-        if username is None:
-            username = self.connection.username
+        if author is None:
+            author = self.connection.username
 
-        self.chat_box.setText(f"{self.chat_box.toPlainText()}\n{username}: {message}")
+        self.chat_box.setText(f"{self.chat_box.toPlainText()}\n{author}: {message}")
 
     @asyncSlot()
     async def send_message(self):
@@ -57,5 +57,5 @@ class Window(QtWidgets.QMainWindow):
 
         self.message_box.clear()
         await self.connection.send(
-            {"op": 0, "data": {"message": message, "from": self.connection.username}}
+            {"op": 0, "data": {"message": message, "author": self.connection.username}}
         )
