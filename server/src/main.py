@@ -4,16 +4,19 @@ import sys
 import uuid
 from typing import Any, Dict
 
+import pydantic
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from starlette.responses import FileResponse
-import pydantic
 
 debug = sys.argv[1] == "debug"
 app = FastAPI(debug=debug)
 
+
 class LoginModel(pydantic.BaseModel):
+    """The user login body"""
     username: str
     password: str
+
 
 class WebsocketConnection:
     """Represents a websocket connection.
@@ -100,7 +103,7 @@ async def home():
 @app.get("/login")
 async def login(body: LoginModel):
     """Retrieves client data from username and password
-    
+
     :param body: the data recieved as a data model
     """
     print(body)
