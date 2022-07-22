@@ -87,10 +87,11 @@ class Window(QtWidgets.QMainWindow):
             return self.error_message.setText("ERROR: Please fill out all fields")
 
         async with self.session.get(
-            "http://127.0.0.1:8082/login",
+            "http://127.0.0.1:8080/login",
             json={"username": username_text, "password": password_text},
         ) as request:
             response = await request.json()
+            print(response)
             if "error" in response:
                 return self.error_message.setText("ERROR: " + response["error"])
 
@@ -98,10 +99,9 @@ class Window(QtWidgets.QMainWindow):
 
         try:
             websocket = await WebsocketHandler.from_user(self.session, response["token"])
-            print("Websocket connected")
 
             connection = WebsocketConnection(
-                self.loop, session=self.session, webscket=websocket
+                username=response["username"], session=self.session, websocket=websocket
             )
 
             home_window = home.Window(connection)
