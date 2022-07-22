@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <form id="frm">
+        <input type="text" placeholder="Enter your username" id="username"><br>
+        <input type="password" placeholder="Enter your password" id="password"><br>
+        <button type="submit">Create account</button>
+    </form>
+    <script>
+        const form = document.getElementById("frm");
+
+        const elementsList = form.getElementsByTagName('input');
+        const elementsArray = [...elementsList];
+
+        form.onsubmit = async(e) => {
+            e.preventDefault();
+
+
+            await fetch("http://127.0.0.1:8080/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json"
+                },
+                body: JSON.stringify(Object.assign({}, ...elementsArray.map((i) => ({[i.id]: i.value}))))
+            });
+        }
+    </script>
+</body>

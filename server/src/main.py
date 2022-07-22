@@ -103,11 +103,24 @@ async def home():
 
 @app.get("/login")
 async def login(body: LoginModel):
-    """Retrieves client data from username and password
+    """Retrieves user data from username and password.
 
-    :param body: the data recieved as a data model
+    :param body: The body received from the request.
     """
-    print(body)
+
+
+@app.get("/register")
+async def register_details():
+    """Register an account."""
+    return FileResponse("views/register.html")
+
+
+@app.post("/register")
+async def create_account(body: LoginModel):
+    """Creates an account from username and password.
+
+    :param body: The body received from the request.
+    """
 
 
 @app.websocket("/ws")
