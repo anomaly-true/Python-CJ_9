@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict
 
@@ -18,7 +19,7 @@ class WebsocketConnection:
     websocket: WebsocketHandler
 
     def __init__(
-        self, username: str, session: ClientSession, websocket: WebsocketHandler
+        self, *, username: str, session: ClientSession, websocket: WebsocketHandler
     ) -> None:
         self.username = username
         self.session = session
@@ -82,4 +83,4 @@ class WebsocketHandler:
         """
         async for message in self.socket:
             if message.type == WSMsgType.TEXT:
-                await self.parse(message.data, home_window)
+                await self.parse(json.loads(message.data), home_window)
