@@ -4,12 +4,27 @@ import sys
 import uuid
 from typing import Any, Dict
 
+import databases
 import pydantic
+from app import models
+from app.database import SQLALCHEMY_DATABASE_URL, engine
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from starlette.responses import FileResponse
 
 debug = sys.argv[1] == "debug"
 app = FastAPI(debug=debug)
+database = databases.Database(SQLALCHEMY_DATABASE_URL)
+models.Base.metadata.create_all(bind=engine)
+
+
+@app.on_event("startup")
+async def connect():  # noqa: D103
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():  # noqa: D103
+    await database.disconnect()
 
 
 class LoginModel(pydantic.BaseModel):
@@ -103,11 +118,24 @@ async def home():
 
 @app.get("/login")
 async def login(body: LoginModel):
-    """Retrieves client data from username and password
+    """Retrieves user data from username and password.
 
-    :param body: the data recieved as a data model
+    :param body: The body received from the request.
     """
-    print(body)
+
+
+@app.get("/register")
+async def register_details():
+    """Register an account."""
+    return FileResponse("views/register.html")
+
+
+@app.post("/register")
+async def create_account(body: LoginModel):
+    """Creates an account from username and password.
+
+    :param body: The body received from the request.
+    """
 
 
 @app.websocket("/ws")
