@@ -88,6 +88,13 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="1">
+           <widget class="QTextEdit" name="textEdit">
+            <property name="html">
+             <string></string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QLabel" name="label_2">
             <property name="font">
@@ -100,13 +107,6 @@
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QTextEdit" name="textEdit_2">
-            <property name="readOnly">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
