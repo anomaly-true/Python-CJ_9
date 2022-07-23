@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qasync import asyncSlot
 from qt_material import apply_stylesheet
 
@@ -37,6 +37,19 @@ class Window(QtWidgets.QMainWindow):
 
         self.message_box.returnPressed.connect(self.send_message)
         self.send_button.clicked.connect(self.send_message)
+
+        list_view: QtWidgets.QListView = self.findChild(QtWidgets.QListView, "listView")
+
+        model = QtGui.QStandardItemModel()
+        list_view.setModel(model)
+
+        for i in map(str, range(100)):
+            item = QtGui.QStandardItem(i)
+            model.appendRow(item)
+
+        first_entry_index = model.index(0, 0)
+        selection_model = list_view.selectionModel()
+        selection_model.select(first_entry_index, QtCore.QItemSelectionModel.Select)
 
     def append_message(self, message: str, author: str = None):
         """Appends a message to the chat box.
