@@ -18,7 +18,7 @@ class Window(QtWidgets.QMainWindow):
 
     def __init__(self, loop: asyncio.AbstractEventLoop, session: ClientSession):
         super().__init__()
-        uic.loadUi("ui/login.ui", self)
+        uic.loadUi("./ui/login.ui", self)
 
         button: QtWidgets.QPushButton = self.findChild(
             QtWidgets.QPushButton, "loginButton"

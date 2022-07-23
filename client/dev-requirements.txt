@@ -1,4 +1,2 @@
 qasync~=0.23
-pyqyt5~=5.15.6
-qt_material~=2.12
-qtwidgets~=0.18
+pyqyt5~=5.15.17
