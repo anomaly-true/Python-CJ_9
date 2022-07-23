@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>809</width>
-    <height>493</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,22 @@
         </property>
         <property name="text">
          <string>Welcome to the Nifty Nixies</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Tip: Right click on different places of the screen</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -84,8 +100,17 @@
         </item>
         <item>
          <widget class="QLineEdit" name="usernameLineEdit">
+          <property name="contextMenuPolicy">
+           <enum>Qt::NoContextMenu</enum>
+          </property>
           <property name="styleSheet">
            <string notr="true"/>
+          </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
           </property>
          </widget>
         </item>
@@ -125,14 +150,17 @@
         </item>
         <item>
          <widget class="QLineEdit" name="passwordLineEdit">
+          <property name="contextMenuPolicy">
+           <enum>Qt::NoContextMenu</enum>
+          </property>
           <property name="inputMethodHints">
-           <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+           <set>Qt::ImhNone</set>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
+           <enum>QLineEdit::Normal</enum>
           </property>
          </widget>
         </item>
