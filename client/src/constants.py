@@ -4,10 +4,10 @@ FEATURE_MESSAGES = {
         "Talk about getting excersise while coding."
     ),
     "loginform": (
-        "The password is useless without the email..."
-        "You can guess a password but the email is longer so harder to guess."
+        "The password is useless without the username..."
+        "You can guess a password but the username is longer so harder to guess."
     ),
-    "toggle": "What's a graphical user interface for if not to excite the user?",
+    "toggle": ("Users don't always know what they want..." "So we choose it for them!"),
 }
 ALL_THEMES = [
     "amber",

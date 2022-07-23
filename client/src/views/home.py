@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 import jedi
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
@@ -32,29 +32,43 @@ class Window(QtWidgets.QMainWindow):
 
         self.connection = connection
 
-        self.chat_box: QtWidgets.QTextEdit = self.findChild(
-            QtWidgets.QTextEdit, "chatBox"
-        )
         self.message_box: QtWidgets.QLineEdit = self.findChild(
             QtWidgets.QLineEdit, "messageBox"
         )
         self.send_button: QtWidgets.QPushButton = self.findChild(
             QtWidgets.QPushButton, "sendButton"
         )
-        self.text_edit: QtWidgets.QTextEdit = self.findChild(
-            QtWidgets.QTextEdit, "textEdit"
+        self.code_input: QtWidgets.QTextEdit = self.findChild(
+            QtWidgets.QTextEdit, "codeInput"
         )
-#         self.text_edit.setMarkdown("""\
-# ```py
-# import unittest
+        self.code_input.setMarkdown(
+            """\
+```py
+import unittest
 
-# class LevelOneTest(unittest.TestCase):
-#     pass
-# ```
-# """)
-        self.text_edit.textChanged.connect(self.on_text_change)
+class LevelOneTest(unittest.TestCase):
+    pass
+```
+""",
+        )
+        self.code_input.textChanged.connect(self.on_text_change)
+
+        self.code_output: QtWidgets.QTextEdit = self.findChild(
+            QtWidgets.QTextEdit, "codeOutput"
+        )
         self.message_box.returnPressed.connect(self.send_message)
         self.send_button.clicked.connect(self.send_message)
+
+        self.run_button: QtWidgets.QPushButton = self.findChild(
+            QtWidgets.QPushButton, "pushButton"
+        )
+        self.run_button.clicked.connect(self.run_code)
+
+        self.chat_box: QtWidgets.QListView = self.findChild(
+            QtWidgets.QListView, "chatBox"
+        )
+        self.chat_box_model = QtGui.QStandardItemModel()
+        self.chat_box.setModel(self.chat_box_model)
 
         list_view: QtWidgets.QListView = self.findChild(QtWidgets.QListView, "listView")
 
@@ -75,10 +89,17 @@ class Window(QtWidgets.QMainWindow):
         :param message: The message to append to the chat box.
         :param username: The username of the message author.
         """
+        if not message:
+            return
         if author is None:
             author = self.connection.username
 
-        self.chat_box.setText(f"{self.chat_box.toPlainText()}\n{author}: {message}")
+        message_item = QtGui.QStandardItem(f"[ {author} ] {message}")
+        self.chat_box_model.appendRow(message_item)
+
+        entry_index = self.chat_box_model.index(self.chat_box_model.rowCount() - 1, 0)
+        selection_model = self.chat_box.selectionModel()
+        selection_model.select(entry_index, QtCore.QItemSelectionModel.Select)
 
     def on_text_change(self):
         """Triggered when the user types in the main text edit.
@@ -86,16 +107,32 @@ class Window(QtWidgets.QMainWindow):
         Runs jedi on the text inputted to act as an
         intellisence input.
         """
-        print("text changed")
-        cursor = self.text_edit.textCursor()
+        code = self.code_input.toMarkdown()
+        print(code)
+        cursor = self.code_input.textCursor()
         line, column = cursor.blockNumber(), cursor.positionInBlock()
-        script = jedi.Script(self.text_edit.toPlainText())
+        script = jedi.Script(self.code_input.toPlainText())
 
-        completions = script.complete(line+1, column)
+        completions = script.complete(line + 1, column)
         if completions:
             print(completions)
-        # for line in self.text_edit.toPlainText().splitlines():
-        #     print(line)
+
+    @asyncSlot()
+    async def run_code(self):
+        """Triggered when run code button is clicked."""
+        self.code_output.setPlainText("Running code...")
+        async with self.connection.session.post(
+            "https://emkc.org/api/v2/piston/execute",
+            json={
+                "language": "py",
+                "version": "3.10",
+                "files": [{"content": self.code_input.toPlainText()}],
+            },
+        ) as request:
+            response: Dict[Any, Any] = (await request.json())["run"]
+        self.code_output.setMarkdown(
+            f"```py\n$ python code.py\n{response['output']}```\nCode exited with code {response['code']}"
+        )
 
     @asyncSlot()
     async def send_message(self):
