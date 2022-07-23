@@ -2,12 +2,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import jedi
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qasync import asyncSlot
 from qt_material import apply_stylesheet
 
 if TYPE_CHECKING:
     from ..connection import WebsocketConnection
+
+# fmt: off
+__all__ = (
+    'Window',
+)
+# fmt: on
 
 
 class Window(QtWidgets.QMainWindow):
@@ -34,7 +41,18 @@ class Window(QtWidgets.QMainWindow):
         self.send_button: QtWidgets.QPushButton = self.findChild(
             QtWidgets.QPushButton, "sendButton"
         )
+        self.text_edit: QtWidgets.QTextEdit = self.findChild(
+            QtWidgets.QTextEdit, "textEdit"
+        )
+#         self.text_edit.setMarkdown("""\
+# ```py
+# import unittest
 
+# class LevelOneTest(unittest.TestCase):
+#     pass
+# ```
+# """)
+        self.text_edit.textChanged.connect(self.on_text_change)
         self.message_box.returnPressed.connect(self.send_message)
         self.send_button.clicked.connect(self.send_message)
 
@@ -61,6 +79,23 @@ class Window(QtWidgets.QMainWindow):
             author = self.connection.username
 
         self.chat_box.setText(f"{self.chat_box.toPlainText()}\n{author}: {message}")
+
+    def on_text_change(self):
+        """Triggered when the user types in the main text edit.
+
+        Runs jedi on the text inputted to act as an
+        intellisence input.
+        """
+        print("text changed")
+        cursor = self.text_edit.textCursor()
+        line, column = cursor.blockNumber(), cursor.positionInBlock()
+        script = jedi.Script(self.text_edit.toPlainText())
+
+        completions = script.complete(line+1, column)
+        if completions:
+            print(completions)
+        # for line in self.text_edit.toPlainText().splitlines():
+        #     print(line)
 
     @asyncSlot()
     async def send_message(self):

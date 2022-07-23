@@ -9,6 +9,13 @@ from aiohttp import ClientSession, ClientWebSocketResponse, WSMsgType
 if TYPE_CHECKING:
     from views import home
 
+# fmt: off
+__all__ = (
+    'WebsocketConnection',
+    'WebsocketHandler'
+)
+# fmt: on
+
 
 @dataclass
 class WebsocketConnection:
