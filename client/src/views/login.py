@@ -19,6 +19,25 @@ __all__ = (
 # fmt: on
 
 
+class Toggle(AnimatedToggle):
+    """Represents an animated toggle."""
+
+    def __init__(self, window: Window, *, checked_color: str, pulse_checked_color: str):
+        super().__init__(
+            checked_color=checked_color, pulse_checked_color=pulse_checked_color
+        )
+
+        self.window = window
+        self.setMaximumSize(100, 100)
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent):
+        """Toggle mouse press event triggered."""
+        if event.button() == QtCore.Qt.RightButton:
+            self.window.parse_mouse_press(event, "toggle")
+        else:
+            super().mousePressEvent(event)
+
+
 class Window(QtWidgets.QMainWindow):
     """Represents the graphical login screen.
 
@@ -44,10 +63,9 @@ class Window(QtWidgets.QMainWindow):
             QtWidgets.QVBoxLayout, "verticalLayout_7"
         )
 
-        toggle = AnimatedToggle(checked_color="#FFFFFF", pulse_checked_color="#000000")
-        toggle.setMaximumSize(100, 100)
-        toggle.clicked.connect(self.theme_toggle)
-        vertical_box.addChildWidget(toggle)
+        self.toggle = Toggle(self, checked_color="#FFFFFF", pulse_checked_color="#000000")
+        self.toggle.clicked.connect(self.theme_toggle)
+        vertical_box.addChildWidget(self.toggle)
 
         self.error_message: QtWidgets.QLabel = self.findChild(
             QtWidgets.QLabel, "errorMessage"
@@ -72,10 +90,13 @@ class Window(QtWidgets.QMainWindow):
         self.theme_colour: str = choice(ALL_THEMES)
         apply_stylesheet(self, theme=f"light_{self.theme_colour}.xml")
 
-        central_widget: QtWidgets.QWidget = self.findChild(QtWidgets.QWidget, "centralwidget")
+        central_widget: QtWidgets.QWidget = self.findChild(
+            QtWidgets.QWidget, "centralwidget"
+        )
         central_widget.setMouseTracking(True)
         central_widget.mouseMoveEvent = self.on_mouse_move
         central_widget.mousePressEvent = self.central_widget_mouse_press
+
         self.mouse_moves = []
 
     def parse_mouse_press(self, event: QtGui.QMouseEvent, widget_name: str):
@@ -98,10 +119,6 @@ class Window(QtWidgets.QMainWindow):
         """Login form clicked."""
         self.parse_mouse_press(event, "loginform")
 
-    def toggle_mouse_press(self, event: QtGui.QMouseEvent):
-        """Toggle button clicked."""
-        self.parse_mouse_press(event, "toggle")
-
     def on_mouse_move(self, event):
         """Triggered when the mouse moves.
 
@@ -113,12 +130,18 @@ class Window(QtWidgets.QMainWindow):
         if event.buttons() == QtCore.Qt.NoButton:
             self.mouse_moves.append(0)
             if len(self.mouse_moves) % 500 == 0:
-                apply_stylesheet(self, theme=f"{'light' if self.light_mode else 'dark'}_{choice(ALL_THEMES)}.xml")
+                apply_stylesheet(
+                    self,
+                    theme=f"{'light' if self.light_mode else 'dark'}_{choice(ALL_THEMES)}.xml",
+                )
 
     def theme_toggle(self):
         """Called when the light mode toggle is clicked."""
         self.light_mode = choice([True, False, False])
-        apply_stylesheet(self, theme=f"{'light' if self.light_mode else 'dark'}_{self.theme_colour}.xml")
+        apply_stylesheet(
+            self,
+            theme=f"{'light' if self.light_mode else 'dark'}_{self.theme_colour}.xml",
+        )
 
     @asyncClose
     async def closeEvent(self, event: QtGui.QCloseEvent):
@@ -127,6 +150,8 @@ class Window(QtWidgets.QMainWindow):
         Asynchronously closes the aiohttp session.
         """
         await self.session.close()
+        if getattr(self, "popup", None):
+            self.popup.close()
 
     @asyncSlot()
     async def on_login(self):
