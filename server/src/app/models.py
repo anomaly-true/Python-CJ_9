@@ -4,7 +4,18 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
-class User(Base):  # noqa: D101
+class User(Base):
+    """Table representing all the users.
+
+    Attributes
+    ----------
+    id: The user id.
+    token: Token to authenticate the.
+    username: Username
+    password: Password
+    is_active: If the user is active or not
+    """
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -16,7 +27,18 @@ class User(Base):  # noqa: D101
     solutions = relationship("Solution")
 
 
-class Code(Base):  # noqa: D101
+class Code(Base):
+    """Table representing a game level.
+
+    Attributes
+    ----------
+    id: The user id.
+    title: The title for the level.
+    bugged_code: The bugged code for the level.
+    documentation: The documentation for how to solve the buggy code.
+    tests: The unittest for the buggy code.
+    """
+
     __tablename__ = "codes"
 
     id = Column(Integer, primary_key=True, index=True)

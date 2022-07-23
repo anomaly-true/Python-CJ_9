@@ -19,17 +19,19 @@ models.Base.metadata.create_all(bind=engine)
 
 
 @app.on_event("startup")
-async def connect():  # noqa: D103
+async def connect():
+    """Starts the database connection"""
     await database.connect()
 
 
 @app.on_event("shutdown")
-async def shutdown():  # noqa: D103
+async def shutdown():
+    """Shuts down the database connection"""
     await database.disconnect()
 
 
 class LoginModel(pydantic.BaseModel):
-    """The user login body"""
+    """The client data model"""
 
     username: str
     password: str
@@ -99,7 +101,6 @@ class ConnectionManager:
         """
         connection = await WebsocketConnection.from_websocket(websocket, username)
         self.active_connections[connection.id] = connection
-        print(self.active_connections)
         return connection
 
     def disconnect(self, connection: WebsocketConnection):
@@ -107,7 +108,6 @@ class ConnectionManager:
 
         :param connection: The websocket to disconnect from.
         """
-        print(self.active_connections)
         del self.active_connections[connection.id]
 
     async def broadcast(self, message: Dict[Any, Any], *, ignore: str):

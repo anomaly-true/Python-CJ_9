@@ -19,7 +19,7 @@ class Window(QtWidgets.QMainWindow):
 
     def __init__(self, connection: WebsocketConnection):
         super().__init__()
-        uic.loadUi("ui/home.ui", self)
+        uic.loadUi("./ui/home.ui", self)
 
         apply_stylesheet(self, theme="dark_purple.xml")
 
