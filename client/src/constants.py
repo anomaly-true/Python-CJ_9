@@ -52,18 +52,8 @@ KEYWORDS = [
     "with",
     "while",
 ]
-LOGICAL = [
-    "def",
-    "class",
-    "and",
-    "not",
-    "or",
-    "is",
-    "global",
-    "nonlocal",
-    "async",
-    "in"
-]
+LOGICAL = ["def", "class", "and", "not", "or", "is", "global", "nonlocal", "async", "in"]
+BOOLEANS = ["True", "False", "None"]
 BRACKETS = [
     r"\(",
     r"\)",
@@ -72,3 +62,19 @@ BRACKETS = [
     r"\{",
     r"\}",
 ]
+
+
+# levels without unittest
+
+LEVELS = {
+    1: {
+        "code": ("print('Hello, world!'"),
+        "output": "Hello, world!",
+        "response_code": 0,
+    },
+    2: {
+        "code": ("print('Hello, world!)"),
+        "output": "Hello, world!",
+        "response_code": 0,
+    },
+}
