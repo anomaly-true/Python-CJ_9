@@ -87,7 +87,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnstretch="0,0,0,0">
+         <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,0,1" columnstretch="0,0,0,0">
           <item row="2" column="3">
            <widget class="QPushButton" name="pushButton">
             <property name="text">
