@@ -48,7 +48,7 @@ class Window(QtWidgets.QMainWindow):
     :param session: The session used to login.
     """
 
-    popup: popup.Window
+    _popup: popup.Window
 
     def __init__(self, session: ClientSession):
         super().__init__()
@@ -109,7 +109,7 @@ class Window(QtWidgets.QMainWindow):
         """
         if event.button() == QtCore.Qt.RightButton:
             feature_message = FEATURE_MESSAGES.get(widget_name)
-            self.popup = popup.Window(feature_message)
+            self._popup = popup.Window(feature_message)
 
     def central_widget_mouse_press(self, event: QtGui.QMouseEvent):
         """Central widget clicked."""

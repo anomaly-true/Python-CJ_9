@@ -8,7 +8,7 @@ FEATURE_MESSAGES = {
         "You can guess a password but the username is longer so harder to guess."
     ),
     "toggle": ("Users don't always know what they want..." "So we choose it for them!"),
-    "codeoutput": (
+    "codeinput": (
         "We need to teach the users that they can't always just delete everything"
         "And except things to work."
     ),
@@ -30,7 +30,6 @@ ALL_THEMES = [
 
 KEYWORDS = [
     "import",
-    "in",
     "from",
     "if",
     "return",
@@ -53,17 +52,8 @@ KEYWORDS = [
     "with",
     "while",
 ]
-LOGICAL = [
-    "def",
-    "class",
-    "and",
-    "not",
-    "or",
-    "is",
-    "global",
-    "nonlocal",
-    "async",
-]
+LOGICAL = ["def", "class", "and", "not", "or", "is", "global", "nonlocal", "async", "in"]
+BOOLEANS = ["True", "False", "None"]
 BRACKETS = [
     r"\(",
     r"\)",
@@ -72,3 +62,30 @@ BRACKETS = [
     r"\{",
     r"\}",
 ]
+
+
+# levels without unittest
+
+# fmt: off
+LEVELS = {
+    1: {
+        "code": ("print('Its not a feature, its a bug!'"),
+        "output": "Its not a feature, its a bug!",
+        "response_code": 0,
+    },
+    2: {
+        "code": ("print('It's not a feature, it's a bug!')"),
+        "output": "It's not a feature, it's a bug!",
+        "response_code": 0,
+    },
+    3: {
+        "code": (
+            "x = 0\n"
+            "if y = 0:\n"
+            "   print('It\'s not a feature, it\'s a bug!')\n"
+        ),
+        "output": "It's not a feature, it's a bug!",
+        "response_code": 0,
+    },
+}
+# fmt: on
