@@ -27,8 +27,14 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
             pattern = variable + r"(\s|)="
             matches = re.findall(pattern, code)
-            if not matches:
-                self.variables.remove(variable)
+            if matches:
+                return
+
+            self.variables.remove(variable)
+            for block in code.splitlines():
+                for match in re.finditer(self.get_used_variables(), block):
+                    start, end = match.span()
+                    self.setFormat(start, end - start, self._mapping[self.get_used_variables])
 
     def get_used_variables(self) -> str:
         """Gets the used variables.
@@ -84,7 +90,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
             },
             "quotes": {
                 "colour": "c78c74",
-                "pattern": r"\"(.*?)\"",
+                "pattern": r"(\"|')(.*?)(\"|')",
             },
             "keywords": {
                 "colour": "c586c0",
