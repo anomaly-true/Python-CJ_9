@@ -20,3 +20,51 @@ ALL_THEMES = [
     "teal",
     "yellow",
 ]
+
+
+# REGEX
+
+KEYWORDS = [
+    "import",
+    "in",
+    "from",
+    "if",
+    "return",
+    "pass",
+    "continue",
+    "yield",
+    "break",
+    "as",
+    "for",
+    "from",
+    "await",
+    "assert",
+    "del",
+    "elif",
+    "else",
+    "try",
+    "except",
+    "finally",
+    "raise",
+    "with",
+    "while",
+]
+LOGICAL = [
+    "def",
+    "class",
+    "and",
+    "not",
+    "or",
+    "is",
+    "global",
+    "nonlocal",
+    "async",
+]
+BRACKETS = [
+    r"\(",
+    r"\)",
+    r"\[",
+    r"\]",
+    r"\{",
+    r"\}",
+]
