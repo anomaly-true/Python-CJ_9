@@ -70,6 +70,9 @@
           <property name="showDropIndicator" stdset="0">
            <bool>false</bool>
           </property>
+          <property name="dragDropOverwriteMode">
+           <bool>false</bool>
+          </property>
           <property name="viewMode">
            <enum>QListView::ListMode</enum>
           </property>
@@ -87,41 +90,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,0,1" columnstretch="0,0,0,0">
-          <item row="2" column="3">
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>Run code</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QTextEdit" name="codeOutput">
-            <property name="styleSheet">
-             <string notr="true">QTextEdit {
-	color:  white;
-}</string>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QLabel" name="label_2">
-            <property name="font">
-             <font>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Welcome to the game</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
+         <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,0,1,0" columnstretch="0,0,0,0">
           <item row="1" column="3">
            <widget class="QTextEdit" name="codeInput">
             <property name="contextMenuPolicy">
@@ -134,6 +103,63 @@
             </property>
             <property name="tabStopDistance">
              <double>31.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QWidget" name="levelComplete" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>You successfully completed this level.</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="nextLevel">
+               <property name="text">
+                <string>Next level</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QPushButton" name="runCode">
+            <property name="text">
+             <string>Run code</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Game</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QTextEdit" name="codeOutput">
+            <property name="styleSheet">
+             <string notr="true">QTextEdit {
+	color:  white;
+}</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -169,7 +195,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Chat room...</string>
+           <string>Chat room</string>
           </property>
           <property name="margin">
            <number>10</number>
