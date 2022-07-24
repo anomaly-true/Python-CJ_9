@@ -87,11 +87,23 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,0,1" columnstretch="0,0,0,0">
+         <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnstretch="0,0,0,0">
           <item row="2" column="3">
            <widget class="QPushButton" name="pushButton">
             <property name="text">
              <string>Run code</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QTextEdit" name="codeOutput">
+            <property name="styleSheet">
+             <string notr="true">QTextEdit {
+	color:  white;
+}</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -110,20 +122,11 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="3">
-           <widget class="QTextEdit" name="codeOutput">
-            <property name="styleSheet">
-             <string notr="true">QTextEdit {
-	color:  white;
-}</string>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="3">
            <widget class="QTextEdit" name="codeInput">
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
+            </property>
             <property name="styleSheet">
              <string notr="true">QTextEdit {
 	color:  white;
