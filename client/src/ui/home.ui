@@ -37,142 +37,57 @@
      <number>0</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,0,6,0,3">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,2,0">
         <item>
-         <widget class="QLabel" name="label_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+         <widget class="QLabel" name="gameLabel">
           <property name="text">
-           <string>Levels</string>
+           <string/>
           </property>
-          <property name="margin">
-           <number>10</number>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QListView" name="listView">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="showDropIndicator" stdset="0">
-           <bool>false</bool>
-          </property>
-          <property name="dragDropOverwriteMode">
-           <bool>false</bool>
-          </property>
-          <property name="viewMode">
-           <enum>QListView::ListMode</enum>
+         <widget class="QTextEdit" name="codeInput">
+          <property name="styleSheet">
+           <string notr="true">QTextEdit {
+	color:  white;
+}</string>
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,0,1,0" columnstretch="0,0,0,0">
-          <item row="1" column="3">
-           <widget class="QTextEdit" name="codeInput">
-            <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QTextEdit {
+         <widget class="QWidget" name="runCodeLayout" native="true">
+          <layout class="QVBoxLayout" name="_2">
+           <item>
+            <widget class="QPushButton" name="runCode">
+             <property name="text">
+              <string>Run code</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="codeOutput">
+             <property name="styleSheet">
+              <string notr="true">QTextEdit {
 	color:  white;
 }</string>
-            </property>
-            <property name="tabStopDistance">
-             <double>31.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QWidget" name="levelComplete" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>You successfully completed this level.</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="nextLevel">
-               <property name="text">
-                <string>Next level</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QPushButton" name="runCode">
-            <property name="text">
-             <string>Run code</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QLabel" name="label_2">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Game</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QTextEdit" name="codeOutput">
-            <property name="styleSheet">
-             <string notr="true">QTextEdit {
-	color:  white;
-}</string>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::NoTextInteraction</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout_2">
