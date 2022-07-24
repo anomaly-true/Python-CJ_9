@@ -66,15 +66,26 @@ BRACKETS = [
 
 # levels without unittest
 
+# fmt: off
 LEVELS = {
     1: {
-        "code": ("print('Hello, world!'"),
-        "output": "Hello, world!",
+        "code": ("print('Its not a feature, its a bug!'"),
+        "output": "Its not a feature, its a bug!",
         "response_code": 0,
     },
     2: {
-        "code": ("print('Hello, world!)"),
-        "output": "Hello, world!",
+        "code": ("print('It's not a feature, it's a bug!')"),
+        "output": "It's not a feature, it's a bug!",
+        "response_code": 0,
+    },
+    3: {
+        "code": (
+            "x = 0\n"
+            "if y = 0:\n"
+            "   print('It\'s not a feature, it\'s a bug!')\n"
+        ),
+        "output": "It's not a feature, it's a bug!",
         "response_code": 0,
     },
 }
+# fmt: on
