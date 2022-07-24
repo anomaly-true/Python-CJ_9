@@ -56,7 +56,7 @@ class Test(unittest.TestCase):
 ```
 """
         )
-        self.code_input.mousePressEvent = self.code_output_mouse_press
+        # self.code_input.mousePressEvent = self.code_output_mouse_press
 
         self.code_output: QtWidgets.QTextEdit = self.findChild(
             QtWidgets.QTextEdit, "codeOutput"
@@ -108,7 +108,10 @@ class Test(unittest.TestCase):
 
     def code_output_mouse_press(self, event: QtGui.QMouseEvent):
         """Central widget clicked."""
-        self.parse_mouse_press(event, "codeoutput")
+        print(QtWidgets.QTextEdit, self.code_input)
+        super(QtWidgets.QTextEdit, self.code_input).mousePressEvent(event)
+        print("?")
+        # self.parse_mouse_press(event, "codeinput")
 
     def append_message(self, message: str, author: str = None):
         """Appends a message to the chat box.
