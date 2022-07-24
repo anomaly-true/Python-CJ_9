@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict
 
+import constants
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qasync import asyncSlot
 from qt_material import apply_stylesheet
 
+from . import popup
 from .highlighter import Highlighter
 
 if TYPE_CHECKING:
@@ -25,6 +27,8 @@ class Window(QtWidgets.QMainWindow):
     user input.
     """
 
+    popup: popup.Window
+
     def __init__(self, connection: WebsocketConnection):
         super().__init__()
         uic.loadUi("./ui/home.ui", self)
@@ -43,16 +47,16 @@ class Window(QtWidgets.QMainWindow):
             QtWidgets.QTextEdit, "codeInput"
         )
         self.code_input.setMarkdown(
-            """\
+            """
 ```py
 import unittest
 
-class LevelOneTest(unittest.TestCase):
+class Test(unittest.TestCase):
     pass
 ```
-""",
+"""
         )
-        self.code_input.textChanged.connect(self.on_text_change)
+        self.code_input.mousePressEvent = self.code_output_mouse_press
 
         self.code_output: QtWidgets.QTextEdit = self.findChild(
             QtWidgets.QTextEdit, "codeOutput"
@@ -89,6 +93,22 @@ class LevelOneTest(unittest.TestCase):
 
         font = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont)
         self.code_input.setFont(font)
+
+    def parse_mouse_press(self, event: QtGui.QMouseEvent, widget_name: str):
+        """Parses a mouse press event.
+
+        Created to avoid repetitive code.
+
+        :param: event: The mouse press event.
+        :param widget_name: The name of the widget pressed.
+        """
+        if event.button() == QtCore.Qt.RightButton:
+            feature_message = constants.FEATURE_MESSAGES.get(widget_name)
+            self.popup = popup.Window(feature_message)
+
+    def code_output_mouse_press(self, event: QtGui.QMouseEvent):
+        """Central widget clicked."""
+        self.parse_mouse_press(event, "codeoutput")
 
     def append_message(self, message: str, author: str = None):
         """Appends a message to the chat box.
