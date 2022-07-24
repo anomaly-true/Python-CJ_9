@@ -22,11 +22,8 @@ class Window(QtWidgets.QWidget):
         uic.loadUi("ui/popup.ui", self)
         apply_stylesheet(self, theme="dark_purple.xml")
 
-        self.feature_box: QtWidgets.QTextEdit = self.findChild(
-            QtWidgets.QTextEdit, "featureBox"
-        )
-        self.feature_box.setText(
-            self.feature_box.toPlainText().replace("{feature}", feature)
-        )
-
+        # fmt: off
+        self.feature_box: QtWidgets.QTextEdit = self.findChild(QtWidgets.QTextEdit, "featureBox")
+        self.feature_box.setText(self.feature_box.toPlainText().replace("{feature}", feature))
+        # fmt: on
         self.show()
