@@ -19,7 +19,12 @@ __all__ = (
 
 @dataclass
 class WebsocketConnection:
-    """Dataclass to hold information about the WebSocket connection."""
+    """Dataclass to hold information about the WebSocket connection.
+
+    :param username: The username of the user.
+    :param session: The session used to make requests.
+    :param websocket: The websocket handler.
+    """
 
     username: str
     session: ClientSession
@@ -43,13 +48,11 @@ class WebsocketConnection:
 
 
 class WebsocketHandler:
-    """
-    Represents a websocket connection.
+    """Represents a websocket connection.
 
-    Attributes
-    ----------
-    MESSAGE
-        A message has been sent from a client.
+    :param websocket: The raw websocket connection.
+    :attr MESSAGE: The message opcode indiciating a user
+                sent a message in the chatbox.
     """
 
     MESSAGE = 0
@@ -66,7 +69,7 @@ class WebsocketHandler:
         """Handles the websocket connection.
 
         :param session: The session used to make the websocket connection.
-        :param loop: The event loop used to make the websocket connection.
+        :param token: The user token to pass through the websocket handshake.
         """
         websocket = await session.ws_connect(f"http://127.0.0.1:8080/ws/{token}")
         self = cls(websocket=websocket)
