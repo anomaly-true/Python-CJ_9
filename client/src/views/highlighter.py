@@ -16,24 +16,53 @@ class Highlighter(QtGui.QSyntaxHighlighter):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._mapping = {}
+        self.variables = []
+
         self.set_up()
 
-    def highlightBlock(self, text_block):
+    def ensure_variables(self):
+        """Ensures that all variables being used are defined."""
+        code = self.document().toPlainText()
+        for variable in self.variables:
+
+            pattern = variable + r"(\s|)="
+            matches = re.findall(pattern, code)
+            if not matches:
+                self.variables.remove(variable)
+
+    def get_used_variables(self) -> str:
+        """Gets the used variables.
+
+        :return: The used variables regex.
+        """
+        return r"|".join(self.variables)
+
+    def highlightBlock(self, text_block: str):
         """Called when the text block changes.
 
         :param text_block: The text block to highlight.
         """
         for pattern, fmt in self._mapping.items():
+            if hasattr(pattern, "__call__"):
+                pattern = pattern()
             for match in re.finditer(pattern, text_block):
                 start, end = match.span()
                 self.setFormat(start, end - start, fmt)
+
+        for _ in re.finditer(r".+?(?==)", text_block):
+            var = text_block.split("=")[0].strip()
+
+            if var not in self.variables:
+                self.variables.append(var)
+        self.ensure_variables()
 
     def set_up(self):
         """Set up the highlighting."""
         functions = [
             s for s in globals()["__builtins__"] if s.islower() and not s.startswith("_")
         ]
-        keywords = list(map(lambda m: "" + m, constants.KEYWORDS))
+        keywords = list(map(lambda m: rf"(?:(?<![^\s\n\r])|$){m}", constants.KEYWORDS))
+        logical = list(map(lambda m: rf"(?:(?<![^\s\n\r])|$){m}", constants.LOGICAL))
 
         # fmt: off
         syntax_dictionary = {
@@ -44,6 +73,10 @@ class Highlighter(QtGui.QSyntaxHighlighter):
             "variables": {
                 "colour": "8bc3e0",
                 "pattern": r".+?(?==)",
+            },
+            "used_variables": {
+                "colour": "8bc3e0",
+                "pattern": self.get_used_variables
             },
             "functions": {
                 "colour": "d2d2a3",
@@ -63,7 +96,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
             },
             "logical": {
                 "colour": "569cd6",
-                "pattern": r"(?:(?![^\s\n\r])|$)|".join(constants.LOGICAL),
+                "pattern": r"(?:(?![^\s\n\r])|$)|".join(logical),
             },
             "class": {
                 "colour": "47af9a",
