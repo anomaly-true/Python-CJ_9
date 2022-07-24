@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict
 
-import jedi
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qasync import asyncSlot
 from qt_material import apply_stylesheet
+
+from .highlighter import Highlighter
 
 if TYPE_CHECKING:
     from ..connection import WebsocketConnection
@@ -83,6 +84,12 @@ class LevelOneTest(unittest.TestCase):
         selection_model = list_view.selectionModel()
         selection_model.select(first_entry_index, QtCore.QItemSelectionModel.Select)
 
+        self.highlighter = Highlighter()
+        self.highlighter.setDocument(self.code_input.document())
+
+        font = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont)
+        self.code_input.setFont(font)
+
     def append_message(self, message: str, author: str = None):
         """Appends a message to the chat box.
 
@@ -100,22 +107,6 @@ class LevelOneTest(unittest.TestCase):
         entry_index = self.chat_box_model.index(self.chat_box_model.rowCount() - 1, 0)
         selection_model = self.chat_box.selectionModel()
         selection_model.select(entry_index, QtCore.QItemSelectionModel.Select)
-
-    def on_text_change(self):
-        """Triggered when the user types in the main text edit.
-
-        Runs jedi on the text inputted to act as an
-        intellisence input.
-        """
-        code = self.code_input.toMarkdown()
-        print(code)
-        cursor = self.code_input.textCursor()
-        line, column = cursor.blockNumber(), cursor.positionInBlock()
-        script = jedi.Script(self.code_input.toPlainText())
-
-        completions = script.complete(line + 1, column)
-        if completions:
-            print(completions)
 
     @asyncSlot()
     async def run_code(self):
