@@ -8,6 +8,10 @@ FEATURE_MESSAGES = {
         "You can guess a password but the username is longer so harder to guess."
     ),
     "toggle": ("Users don't always know what they want..." "So we choose it for them!"),
+    "codeoutput": (
+        "We need to teach the users that they can't always just delete everything"
+        "And except things to work."
+    ),
 }
 ALL_THEMES = [
     "amber",
