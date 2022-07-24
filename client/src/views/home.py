@@ -2,10 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict
 
-import jedi
+import constants
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qasync import asyncSlot
 from qt_material import apply_stylesheet
+
+from . import popup
+from .highlighter import Highlighter
 
 if TYPE_CHECKING:
     from ..connection import WebsocketConnection
@@ -23,6 +26,8 @@ class Window(QtWidgets.QMainWindow):
     Used to connect the websocket connection and the
     user input.
     """
+
+    popup: popup.Window
 
     def __init__(self, connection: WebsocketConnection):
         super().__init__()
@@ -42,16 +47,16 @@ class Window(QtWidgets.QMainWindow):
             QtWidgets.QTextEdit, "codeInput"
         )
         self.code_input.setMarkdown(
-            """\
+            """
 ```py
 import unittest
 
-class LevelOneTest(unittest.TestCase):
+class Test(unittest.TestCase):
     pass
 ```
-""",
+"""
         )
-        self.code_input.textChanged.connect(self.on_text_change)
+        self.code_input.mousePressEvent = self.code_output_mouse_press
 
         self.code_output: QtWidgets.QTextEdit = self.findChild(
             QtWidgets.QTextEdit, "codeOutput"
@@ -83,6 +88,28 @@ class LevelOneTest(unittest.TestCase):
         selection_model = list_view.selectionModel()
         selection_model.select(first_entry_index, QtCore.QItemSelectionModel.Select)
 
+        self.highlighter = Highlighter()
+        self.highlighter.setDocument(self.code_input.document())
+
+        font = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont)
+        self.code_input.setFont(font)
+
+    def parse_mouse_press(self, event: QtGui.QMouseEvent, widget_name: str):
+        """Parses a mouse press event.
+
+        Created to avoid repetitive code.
+
+        :param: event: The mouse press event.
+        :param widget_name: The name of the widget pressed.
+        """
+        if event.button() == QtCore.Qt.RightButton:
+            feature_message = constants.FEATURE_MESSAGES.get(widget_name)
+            self.popup = popup.Window(feature_message)
+
+    def code_output_mouse_press(self, event: QtGui.QMouseEvent):
+        """Central widget clicked."""
+        self.parse_mouse_press(event, "codeoutput")
+
     def append_message(self, message: str, author: str = None):
         """Appends a message to the chat box.
 
@@ -100,22 +127,6 @@ class LevelOneTest(unittest.TestCase):
         entry_index = self.chat_box_model.index(self.chat_box_model.rowCount() - 1, 0)
         selection_model = self.chat_box.selectionModel()
         selection_model.select(entry_index, QtCore.QItemSelectionModel.Select)
-
-    def on_text_change(self):
-        """Triggered when the user types in the main text edit.
-
-        Runs jedi on the text inputted to act as an
-        intellisence input.
-        """
-        code = self.code_input.toMarkdown()
-        print(code)
-        cursor = self.code_input.textCursor()
-        line, column = cursor.blockNumber(), cursor.positionInBlock()
-        script = jedi.Script(self.code_input.toPlainText())
-
-        completions = script.complete(line + 1, column)
-        if completions:
-            print(completions)
 
     @asyncSlot()
     async def run_code(self):
