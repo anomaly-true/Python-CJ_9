@@ -90,7 +90,6 @@ class Widgets:
         self.run_button.clicked.connect(window.run_code)
 
         self.next_level.clicked.connect(window.next_level)
-        self.level_complete.hide()
 
         self.chat_box_model = QtGui.QStandardItemModel()
         self.chat_box.setModel(self.chat_box_model)
@@ -105,6 +104,9 @@ class Widgets:
         :return: The Level object created according
                 the the level.
         """
+        self.level_complete.hide()
+        self.code_output.clear()
+
         self.levels_view.list_view.reset()
         entry_index = self.levels_view.model.index(level - 1, 0)
         self.levels_view.selection_model.select(
@@ -160,7 +162,7 @@ class Window(QtWidgets.QMainWindow):
 
     def next_level(self):
         """Sets the level to the next_level."""
-        self.widgets.set_level(self.level.level + 1)
+        self.level = self.widgets.set_level(self.level.level + 1)
 
     def list_view_mouse_press(self, event: QtGui.QMouseEvent):
         """List view mouse press event.
@@ -173,6 +175,8 @@ class Window(QtWidgets.QMainWindow):
         position = self.mapFromGlobal(QtGui.QCursor.pos())
         row = self.widgets.levels_view.list_view.indexAt(position).row()
 
+        if not self.completed_levels:
+            return
         if row in self.completed_levels + [max(self.completed_levels) + 1]:
             super(
                 QtWidgets.QListView, self.widgets.levels_view.list_view
@@ -233,6 +237,7 @@ class Window(QtWidgets.QMainWindow):
         self.widgets.code_output.setMarkdown(
             f"```py\n$ python code.py\n{response['output']}```\nCode exited with code {response['code']}"
         )
+        print(response["output"].strip(), self.level.output)
         if (
             response["output"].strip() == self.level.output
             and response["code"] == self.level.response_code
