@@ -20,7 +20,7 @@ class Window(QtWidgets.QWidget):
     def __init__(self, feature: str):
         super().__init__()
         uic.loadUi("ui/popup.ui", self)
-        apply_stylesheet(self, theme="light_purple.xml")
+        apply_stylesheet(self, theme="dark_purple.xml")
 
         self.feature_box: QtWidgets.QTextEdit = self.findChild(
             QtWidgets.QTextEdit, "featureBox"
