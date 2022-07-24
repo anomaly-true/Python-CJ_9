@@ -34,7 +34,9 @@ class Highlighter(QtGui.QSyntaxHighlighter):
             for block in code.splitlines():
                 for match in re.finditer(self.get_used_variables(), block):
                     start, end = match.span()
-                    self.setFormat(start, end - start, self._mapping[self.get_used_variables])
+                    self.setFormat(
+                        start, end - start, self._mapping[self.get_used_variables]
+                    )
 
     def get_used_variables(self) -> str:
         """Gets the used variables.
@@ -100,6 +102,10 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                 "colour": "47af9a",
                 "pattern": r"(?m)(?<=\bimport ).*",
             },
+            "bool": {
+                "colour": "569cd6",
+                "pattern": r"|".join(constants.BOOLEANS)
+            },
             "logical": {
                 "colour": "569cd6",
                 "pattern": r"(?:(?![^\s\n\r])|$)|".join(logical),
@@ -122,6 +128,5 @@ class Highlighter(QtGui.QSyntaxHighlighter):
         for syntax in syntax_dictionary.values():
             class_format = QtGui.QTextCharFormat()
             class_format.setForeground(QtGui.QColor("#" + syntax["colour"]))
-            class_format.setFontWeight(QtGui.QFont.Bold)
 
             self._mapping[syntax["pattern"]] = class_format
