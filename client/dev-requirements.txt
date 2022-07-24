@@ -1,2 +1,6 @@
 qasync~=0.23
 pyqt5~=5.15.17
+qt_material~=2.12
+qasync~=0.23.0
+aiohttp~=3.8.1
+qtwidgets~=0.18
