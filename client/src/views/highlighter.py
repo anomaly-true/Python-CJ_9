@@ -122,6 +122,10 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                 "colour": "f8d101",
                 "pattern": "|".join(constants.BRACKETS),
             },
+            "back_slash": {
+                "colour": "cfb379",
+                "pattern": r"\\"
+            }
         }
         # fmt: on
 
